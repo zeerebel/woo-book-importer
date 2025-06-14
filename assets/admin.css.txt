@@ -1,0 +1,14 @@
+.wbi-wrap h1 { margin-bottom: 20px; }
+.wbi-card { background: #fff; border: 1px solid #c3c4c7; box-shadow: 0 1px 1px rgba(0,0,0,.04); padding: 20px; margin-top: 20px; }
+.wbi-card h2 { margin-top: 0; font-size: 1.2em; display: flex; align-items: center; gap: 8px; }
+.wbi-importer-area { display: flex; align-items: center; gap: 15px; }
+#wbi-import-form { display: flex; flex-grow: 1; gap: 10px; }
+#wbi-import-form input[type="text"] { flex-grow: 1; }
+#wbi-single-results .notice { margin: 0 !important; }
+.wbi-meta { color: #646970; font-size: 12px; margin-top: 3px; }
+.wbi-keepa-col .button { margin-bottom: 10px; }
+.wbi-keepa-results div { padding: 2px 0; border-bottom: 1px dotted #eee; }
+.wbi-keepa-results div:last-child { border-bottom: none; }
+.wbi-store-col .wbi-form-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.wbi-store-col label { font-weight: 600; min-width: 80px; }
+.wbi-store-col input { max-width: 100px; }
