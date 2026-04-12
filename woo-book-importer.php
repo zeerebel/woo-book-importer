@@ -1,47 +1,51 @@
 <?php
 /**
- * Plugin Name:       Woo Book Importer
- * Plugin URI:        https://mongphu.com/
- * Description:       Import book data from Google Books API into WooCommerce products using an ISBN.
- * Version:           1.5.0
- * Author:            Mong Phu
- * Author URI:        https://mongphu.com/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       woo-book-importer
+ * Plugin Name: Woo Book Importer
+ * Description: Import books from Google Books + Keepa into WooCommerce
+ * Version: 1.8.2
+ * Author: Mark Phu
+ * Text Domain: woo-book-importer
  */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-    die;
-}
+defined('ABSPATH') || exit;
 
-define( 'WBI_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WBI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WBI_VERSION', '1.5.0' );
+define('WBI_VERSION', '1.8.2');
+define('WBI_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('WBI_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-function run_woo_book_importer() {
-    if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-        add_action( 'admin_notices', function() {
-            echo '<div class="notice notice-error is-dismissible"><p><strong>Woo Book Importer</strong> requires WooCommerce to be installed and active to function.</p></div>';
-        });
-        return;
+class WBI_Core {
+    public static function init() {
+        if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+            add_action('admin_notices', [__CLASS__, 'missing_woocommerce_notice']);
+            return;
+        }
+
+        require_once WBI_PLUGIN_PATH . 'includes/api-handler.php';
+        require_once WBI_PLUGIN_PATH . 'includes/keepa-api-handler.php';
+        require_once WBI_PLUGIN_PATH . 'includes/product-importer.php';
+        require_once WBI_PLUGIN_PATH . 'includes/admin-ui.php';
+
+        new WBI_Admin_UI();
     }
-    require_once WBI_PLUGIN_PATH . 'includes/api-handler.php';
-    require_once WBI_PLUGIN_PATH . 'includes/product-importer.php';
-    require_once WBI_PLUGIN_PATH . 'includes/admin-ui.php';
-    require_once WBI_PLUGIN_PATH . 'includes/keepa-api-handler.php'; // New file for Keepa
 
-    $plugin = new WBI_Admin_UI();
-    $plugin->init();
-}
-add_action( 'plugins_loaded', 'run_woo_book_importer' );
+    public static function missing_woocommerce_notice() {
+        echo '<div class="notice notice-error"><p>Woo Book Importer requires WooCommerce to be installed and active.</p></div>';
+    }
 
-function wbi_activate_plugin() {
-    $upload_dir = wp_upload_dir();
-    $book_covers_dir = $upload_dir['basedir'] . '/book-covers';
-    if ( ! file_exists( $book_covers_dir ) ) {
-        wp_mkdir_p( $book_covers_dir );
+    public static function activate() {
+        $dir = wp_upload_dir()['basedir'] . '/book-covers';
+        if (!file_exists($dir)) {
+            wp_mkdir_p($dir);
+        }
     }
 }
-register_activation_hook( __FILE__, 'wbi_activate_plugin' );
+
+// Initialize
+add_action('plugins_loaded', ['WBI_Core', 'init']);
+register_activation_hook(__FILE__, ['WBI_Core', 'activate']);
+
+// Settings
+add_action('admin_init', function() {
+    register_setting('wbi_options', 'wbi_google_books_api_key');
+    register_setting('wbi_options', 'wbi_keepa_api_key');
+});

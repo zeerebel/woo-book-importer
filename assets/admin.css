@@ -1,0 +1,201 @@
+/* ===== Main Dashboard ===== */
+.wbi-dashboard {
+    max-width: 1200px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* ===== Import Section ===== */
+.wbi-import-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.wbi-import-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wbi-import-box h2 {
+    margin-top: 0;
+    font-size: 1.3em;
+    color: #1d2327;
+}
+
+/* ===== Tabs ===== */
+.wbi-tabs {
+    display: flex;
+    border-bottom: 1px solid #dcdcde;
+    margin-bottom: 15px;
+}
+
+.wbi-tabs .tab-button {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    font-size: 14px;
+    color: #646970;
+}
+
+.wbi-tabs .tab-button.active {
+    border-bottom-color: #2271b1;
+    color: #1d2327;
+    font-weight: 600;
+}
+
+.wbi-tab-content {
+    display: none;
+}
+
+.wbi-tab-content.active {
+    display: block;
+}
+
+/* ===== Form Elements ===== */
+#wbi-isbn-input,
+#wbi-bulk-isbns {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#wbi-bulk-isbns {
+    min-height: 150px;
+}
+
+/* ===== Stats Cards ===== */
+.wbi-stats-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wbi-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.wbi-stat-card {
+    background: #f6f7f7;
+    padding: 15px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.wbi-stat-card .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    display: block;
+    color: #2271b1;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.wbi-stat-card .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #646970;
+    letter-spacing: 0.5px;
+}
+
+/* ===== Results Area ===== */
+#wbi-import-result,
+#wbi-bulk-results {
+    margin-top: 15px;
+}
+
+.notice {
+    margin: 5px 0 0 0 !important;
+}
+
+/* ===== Imported Books Table ===== */
+.wbi-imported-books {
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wp-list-table .column-price {
+    width: 100px;
+    text-align: right !important;
+}
+
+/* ===== Support Box ===== */
+.wbi-support-box {
+    margin-top: 30px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wbi-support-box h3 {
+    margin-top: 0;
+}
+
+.wbi-donation-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.wbi-donation-buttons .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.wbi-donation-buttons .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== Meta Box ===== */
+.wbi-meta-box {
+    padding: 10px;
+}
+
+.wbi-meta-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.wbi-meta-label {
+    width: 150px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.wbi-meta-value ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 782px) {
+    .wbi-import-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .wbi-meta-row {
+        flex-direction: column;
+    }
+    
+    .wbi-meta-label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .wbi-donation-buttons {
+        flex-direction: column;
+    }
+}

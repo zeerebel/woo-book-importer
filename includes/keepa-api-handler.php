@@ -1,11 +1,10 @@
 <?php
-if ( ! defined( 'WPINC' ) ) {
-    die;
-}
+defined('ABSPATH') || exit;
 
 class WBI_Keepa_API_Handler {
     private $api_key;
     const API_BASE_URL = 'https://api.keepa.com/';
+    const CACHE_EXPIRY = 6 * HOUR_IN_SECONDS;
 
     public function __construct() {
         $this->api_key = get_option('wbi_keepa_api_key');
@@ -13,33 +12,43 @@ class WBI_Keepa_API_Handler {
 
     public function fetch_product_data($isbn) {
         if (empty($this->api_key)) {
-            return new WP_Error('keepa_api_key_missing', 'Keepa API key is not set.');
+            return new WP_Error('keepa_api_key_missing', 'Keepa API key is not configured.');
         }
 
-        $request_url = add_query_arg([
-            'key'    => $this->api_key,
+        $cache_key = 'wbi_keepa_' . md5($isbn);
+        if ($cached = get_transient($cache_key)) {
+            return $cached;
+        }
+
+        $response = wp_remote_get(add_query_arg([
+            'key' => $this->api_key,
             'domain' => '1',
-            'code'   => $isbn,
-            'stats'  => '180'
-        ], self::API_BASE_URL . 'product');
-        
-        $response = wp_remote_get($request_url, ['timeout' => 20]);
-        if (is_wp_error($response)) { return new WP_Error('keepa_request_failed', 'Keepa API request failed.'); }
+            'code' => sanitize_text_field($isbn),
+            'stats' => '180'
+        ], self::API_BASE_URL . 'product'), [
+            'timeout' => 25,
+            'user-agent' => 'WooBookImporter/1.7.2'
+        ]);
 
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        if (empty($data['products'][0])) {
-            return new WP_Error('keepa_not_found', 'Product not found on Keepa.');
+        if (is_wp_error($response)) {
+            return $response;
         }
 
-        $product_data = $data['products'][0];
-        $stats = $product_data['stats'];
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+        if (empty($data['products'][0])) {
+            set_transient($cache_key, [], self::CACHE_EXPIRY);
+            return new WP_Error('keepa_not_found', 'No Amazon data for ISBN: ' . $isbn);
+        }
 
-        return [
-            'avg_new_price' => isset($stats['avg'][1]) ? '$' . number_format($stats['avg'][1] / 100, 2) : 'N/A',
-            'current_new_price' => isset($stats['current'][1]) ? '$' . number_format($stats['current'][1] / 100, 2) : 'N/A',
-            'sales_rank' => isset($product_data['salesRanks']['ALL'][0]) ? '#' . number_format($product_data['salesRanks']['ALL'][0]) : 'N/A',
+        $result = [
+            'current_price' => $data['products'][0]['stats']['current'][1] ?? null, // Price in cents
+            'avg_price' => $data['products'][0]['stats']['avg'][1] ?? null,
+            'sales_rank' => $data['products'][0]['salesRanks']['ALL'][0] ?? null,
+            'last_updated' => time(),
+            'product_type' => $data['products'][0]['productType'] ?? 'unknown'
         ];
+
+        set_transient($cache_key, $result, self::CACHE_EXPIRY);
+        return $result;
     }
 }
