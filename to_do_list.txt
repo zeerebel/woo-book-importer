@@ -1,0 +1,34 @@
+# Woo Book Importer
+
+Import books directly from Google Books and Amazon into WooCommerce.
+
+## Features
+
+- Single or bulk ISBN imports
+- Automatic high-resolution cover images
+- Amazon price data via Keepa API
+- Real-time import statistics
+- Automatic category generation
+
+## Installation
+
+1. Upload the `woo-book-importer` folder to `/wp-content/plugins/`
+2. Activate the plugin in WordPress admin
+3. Set API keys in Settings → Book Importer
+
+## Support
+
+For help, please [open an issue on GitHub](https://github.com/your-repo/woo-book-importer/issues).
+
+## Donate
+
+❤️ Love this plugin? Support its development:
+
+[![Donate via PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://paypal.me/yourpaypal)  
+
+https://www.paypal.com/donate/?hosted_button_id=83Z86HGGSE2PU
+
+
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/fusionmma)
+
+coff.ee/fusionmma

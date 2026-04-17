@@ -3,7 +3,7 @@
  * Plugin Name: Woo Book Importer
  * Description: Import books from Google Books + Keepa into WooCommerce
  * Version: 1.8.2
- * Author: Mark Phu
+ * Author: Your Name
  * Text Domain: woo-book-importer
  */
 

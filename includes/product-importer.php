@@ -97,21 +97,40 @@ class WBI_Product_Importer {
     }
 
     private function assign_categories($product_id, $categories_from_api) {
+        // Make sure our logging function exists before we use it
+        if (!function_exists('log_isbn_debug')) {
+            return; 
+        }
+
+        // DEBUG: Log the raw data we get from the API
+        log_isbn_debug(['step' => 1, 'message' => 'Starting category assignment.', 'raw_api_categories' => $categories_from_api]);
+
         if (empty($categories_from_api)) {
             $categories_from_api = [];
         }
 
         $term_ids = [];
+        // The 'Books' category is hardcoded to ensure it always exists.
         $category_paths = array_unique(array_merge(['Books'], $categories_from_api));
+        
+        // DEBUG: Log the combined and unique category paths we will process.
+        log_isbn_debug(['step' => 2, 'message' => 'All category paths to be processed.', 'paths' => $category_paths]);
 
         foreach ($category_paths as $category_path) {
+            // This replaces common separators with a standard '/' for hierarchy.
             $category_path_normalized = str_replace([' & ', ', '], '/', $category_path);
-            $parent_id = 0;
+            $parent_id = 0; // Reset to top-level for each new path.
+            
+            // DEBUG: Log each path as we start processing it.
+            log_isbn_debug(['step' => 3, 'message' => 'Processing a single category path.', 'original_path' => $category_path, 'normalized_path' => $category_path_normalized]);
 
             $category_parts = array_map('trim', explode('/', $category_path_normalized));
 
             foreach ($category_parts as $category_name) {
                 if (empty($category_name)) continue;
+                
+                // DEBUG: Log the individual category part and the parent ID we are checking against.
+                log_isbn_debug(['step' => 4, 'message' => 'Looking for or creating term.', 'term_name' => $category_name, 'parent_id' => $parent_id]);
 
                 $term = term_exists($category_name, 'product_cat', $parent_id);
 
@@ -121,17 +140,22 @@ class WBI_Product_Importer {
                     $term_id = $term;
                 } else {
                     $new_term = wp_insert_term($category_name, 'product_cat', ['parent' => $parent_id]);
-                    if (is_wp_error($new_term)) {
+                    if (is_wp_error($new__term)) {
+                        // DEBUG: Log any errors during term creation. This is critical.
+                        log_isbn_debug(['step' => 'ERROR', 'message' => 'Failed to insert term.', 'term_name' => $category_name, 'error' => $new_term->get_error_message()]);
                         $parent_id = 0;
-                        continue 2;
+                        continue 2; // Skip to the next category path on error
                     }
                     $term_id = $new_term['term_id'];
                 }
 
                 $term_ids[] = $term_id;
-                $parent_id = $term_id;
+                $parent_id = $term_id; // The current term becomes the parent for the next part.
             }
         }
+
+        // DEBUG: Log the final array of term IDs to be assigned to the product.
+        log_isbn_debug(['step' => 5, 'message' => 'Final list of term IDs to be assigned.', 'term_ids' => array_unique($term_ids)]);
 
         if (!empty($term_ids)) {
             wp_set_object_terms($product_id, array_unique($term_ids), 'product_cat', false);

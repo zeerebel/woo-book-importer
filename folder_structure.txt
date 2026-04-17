@@ -1,0 +1,13 @@
+# File Structure - v1.8.2
+/woo-book-importer/
+├── woo-book-importer.php         # Main plugin file
+├── README.md                     # Documentation
+├── CHANGELOG.md                  # Version history
+├── includes/
+│   ├── api-handler.php           # Google Books API
+│   ├── keepa-api-handler.php     # Amazon pricing data
+│   ├── product-importer.php      # Core import logic
+│   └── admin-ui.php              # Admin interface
+└── assets/
+    ├── admin.css                 # Dashboard styles
+    └── admin.js                  # Interactive functionality
